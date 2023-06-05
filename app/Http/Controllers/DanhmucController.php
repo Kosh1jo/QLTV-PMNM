@@ -28,10 +28,13 @@ class DanhmucController extends Controller
         return redirect()->back();
     }
     public function list(Request $request){
+        $keywords = $request->input('keywords');
+        $searchType = $request->input('searchType');
+        $pageSize = $request->input('page_size',2);
         return view('admin.danhmuc.list',[
             'title'=>'Danh sách danh mục',
-            'danhmucs'=>$this->danhmucService->getAll($request),
-            'pagesize'=>$request->input('page_size',2)
+            'danhmucs'=>$this->danhmucService->getAll($keywords,$searchType,$pageSize),
+            'pagesize'=>$pageSize
 
         ]);
     }

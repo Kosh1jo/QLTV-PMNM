@@ -4,8 +4,10 @@ namespace App\Http\Service;
 
 use App\Models\Danhmuc;
 use http\Env\Request;
+use mysql_xdevapi\Session;
 use PHPUnit\Exception;
 use DB;
+use function PHPUnit\Framework\isEmpty;
 
 class DanhMucService
 {
@@ -25,11 +27,30 @@ class DanhMucService
         }
         return true;
     }
-    public function  getAll($request){
-        $keywords = $request->input('keywords');
-        $searchType = $request->input('$searchType');
-        $pageSize = $request->input('page_size',2);
-        return Danhmuc::paginate($pageSize)->withQueryString();
+    public function  getAll($keywords,$searchType,$pageSize){
+        $query = Danhmuc::query();
+        if ($keywords && $searchType) {
+            switch ($searchType){
+                case 0:
+                    $query->where(function ($subQuery) use ($keywords) {
+                        $subQuery->where('MaDM', 'like', '%' . $keywords . '%')
+                            ->orWhere('TenDM', 'like', '%' . $keywords . '%')
+                            ->orWhere('Vitri', 'like', '%' . $keywords . '%');
+                    });
+                    break;
+                case 1:
+                    $query->where('MaDM', 'like', '%' . $keywords . '%');
+                   break;
+                case 2:
+                    $query->where('TenDM', 'like', '%' . $keywords . '%');
+                    break;
+                case 3:
+                    $query->where('Vitri', 'like', '%' . $keywords . '%');
+                    break;
+            }
+        }
+        $danhmucs = $query->paginate($pageSize)->withQueryString();
+        return $danhmucs;
     }
     public function edit($request,$danhmuc){
         try {

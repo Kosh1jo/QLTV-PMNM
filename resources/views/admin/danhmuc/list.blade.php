@@ -14,14 +14,14 @@
             <form action="" method="get">
                 <div class="d-flex m-2">
                     <div class="col-6">
-                        <input type="search" class="form-control" name="keywords" id="" placeholder="Từ khóa tìm kiếm...">
+                        <input value="{{request()->input('keywords') ? :''}}" type="search" class="form-control" name="keywords" id="" placeholder="Từ khóa tìm kiếm...">
                     </div>
                     <div class="col-3">
                         <select class="form-control" name="searchType">
-                            <option value="0" >----Type----</option>
-                            <option value="1">Mã danh mục</option>
-                            <option value="2">Tên danh mục</option>
-                            <option value="3">Vị trí</option>
+                            <option value="0" {{request()->input('searchType')==0 ? 'selected':''}}>----Type----</option>
+                            <option value="1" {{request()->input('searchType')==1 ? 'selected':''}}>Mã danh mục</option>
+                            <option value="2" {{request()->input('searchType')==2 ? 'selected':''}}>Tên danh mục</option>
+                            <option value="3" {{request()->input('searchType')==3 ? 'selected':''}}>Vị trí</option>
                         </select>
                     </div>
                     <div class="col-3">
@@ -43,6 +43,7 @@
         </tr>
         </thead>
         <tbody>
+        @if(!empty($danhmucs))
         @foreach($danhmucs as $key => $danhmuc)
             <tr>
                 <td>{{$danhmucs->currentPage()*$pagesize-$pagesize+$key+1}}</td>
@@ -55,6 +56,9 @@
                 </td>
             </tr
         @endforeach
+        @else
+            <h5 class="mt-3 text-center text-body-secondary ">Không tìm thấy danh mục bạn yêu cầu</h5>
+        @endif
         </tbody>
     </table>
     <div class="row">
